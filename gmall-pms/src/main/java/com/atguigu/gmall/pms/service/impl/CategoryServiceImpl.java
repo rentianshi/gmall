@@ -35,7 +35,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, CategoryEnt
     @Override
     public List<CategoryEntity> queryCategoriesByPid(Long parentId) {
         QueryWrapper<CategoryEntity> wrapper = new QueryWrapper<>();
-        if (parentId==0){
+        if (parentId!=-1){
             wrapper.eq("parent_id",parentId);
         }
         return this.list(wrapper);

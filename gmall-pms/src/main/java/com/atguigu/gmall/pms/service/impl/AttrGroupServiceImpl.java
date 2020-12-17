@@ -1,6 +1,13 @@
 package com.atguigu.gmall.pms.service.impl;
 
+import com.atguigu.gmall.pms.entity.AttrEntity;
+import com.atguigu.gmall.pms.mapper.AttrMapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -11,10 +18,16 @@ import com.atguigu.gmall.common.bean.PageParamVo;
 import com.atguigu.gmall.pms.mapper.AttrGroupMapper;
 import com.atguigu.gmall.pms.entity.AttrGroupEntity;
 import com.atguigu.gmall.pms.service.AttrGroupService;
+import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
 
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupMapper, AttrGroupEntity> implements AttrGroupService {
+
+    @Resource
+    private AttrMapper attrMapper;
 
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
@@ -24,6 +37,24 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupMapper, AttrGroup
         );
 
         return new PageResultVo(page);
+    }
+
+    @Override
+    public List<AttrGroupEntity> queryGroupWithAttrsByCid(Long cid) {
+        //根据分类id来查询分组
+        QueryWrapper<AttrGroupEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("category_id",cid);
+        List<AttrGroupEntity> groupEntities = this.list(queryWrapper);
+
+        if (CollectionUtils.isEmpty(groupEntities)){
+            return null;
+        }
+        //批量装入groupEntities，将每一个符合条件的属性分别装入不同的组
+        groupEntities.forEach(group->{
+            List<AttrEntity> attrEntities = this.attrMapper.selectList(new QueryWrapper<AttrEntity>().eq("group_id", group.getId()).eq("type", 1));
+            group.setAttrEntities(attrEntities);
+        });
+        return groupEntities;
     }
 
 }
