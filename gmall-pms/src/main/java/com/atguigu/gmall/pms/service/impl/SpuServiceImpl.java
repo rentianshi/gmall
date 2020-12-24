@@ -12,6 +12,7 @@ import com.atguigu.gmall.pms.vo.SkuVo;
 import com.atguigu.gmall.pms.vo.SpuAttrValueVo;
 import com.atguigu.gmall.pms.vo.SpuVo;
 import com.atguigu.gmall.sms.vo.SkuSaleVo;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang.StringUtils;
 
 import org.springframework.beans.BeanUtils;
@@ -80,7 +81,7 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         String key = paramVo.getKey();
         //判断关键字是否为空
         if (StringUtils.isNotBlank(key)){
-            wrapper.and(t -> t.eq("id",key).or().like("name",key));
+            wrapper.and(t -> t.like("id",key).or().like("name",key));
         }
 
         IPage<SpuEntity> page = this.page(
@@ -91,7 +92,7 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         return new PageResultVo(page);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @GlobalTransactional
     @Override
     public void bigSave(SpuVo spu) {
         //保存spu的相关信息

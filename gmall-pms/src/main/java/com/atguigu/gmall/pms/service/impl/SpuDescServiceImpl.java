@@ -26,8 +26,7 @@ import javax.annotation.Resource;
 @Service("spuDescService")
 public class SpuDescServiceImpl extends ServiceImpl<SpuDescMapper, SpuDescEntity> implements SpuDescService {
 
-    @Resource
-    SpuDescMapper descMapper;
+
     @Override
     public PageResultVo queryPage(PageParamVo paramVo) {
         IPage<SpuDescEntity> page = this.page(
@@ -45,7 +44,7 @@ public class SpuDescServiceImpl extends ServiceImpl<SpuDescMapper, SpuDescEntity
             SpuDescEntity spuDescEntity = new SpuDescEntity();
             spuDescEntity.setSpuId(spu.getId());
             spuDescEntity.setDecript(StringUtils.join(spuImages,","));
-            descMapper.insert(spuDescEntity);
+           this.save(spuDescEntity);
         }
     }
 

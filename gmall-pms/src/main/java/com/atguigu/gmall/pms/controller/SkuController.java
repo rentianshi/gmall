@@ -32,7 +32,6 @@ import com.atguigu.gmall.common.bean.PageParamVo;
 @RestController
 @RequestMapping("pms/sku")
 public class SkuController {
-
     @Autowired
     private SkuService skuService;
 
